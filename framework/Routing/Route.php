@@ -2,42 +2,44 @@
 
 namespace Framework\Routing;
 
-class Route {
+class Route
+{
     protected string $method;
     protected string $path;
     protected $handler;
     protected array $parameters = [];
     protected ?string $name = null;
 
-    public function name (string $name = null): mixed {
+    public function __construct(string $method, string $path, callable $handler)
+    {
+        $this->method = $method;
+        $this->path = $path;
+        $this->handler = $handler;
+    }
+
+    public function method(string $method): string
+    {
+        return $this->method;
+    }
+
+    public function path(string $path): string
+    {
+        return $this->path;
+    }
+
+    public function parameters(): array
+    {
+        return $this->parameters;
+    }
+
+    public function name(string $name = null): string
+    {
         if ($name) {
             $this->name = $name;
             return $this;
         }
+
         return $this->name;
-    }
-
-    public function parameters(): array{
-        return $this->parameters;
-    }
-
-    public function __construct(
-        string $method,
-        string $path,
-        callable $handler
-    )
-    {
-        $this->method = $method;
-        $this->path = $path;
-        $this->handler= $handler;        
-    }
-
-    public function method(string $method): string {
-        return $this->method;
-    }
-
-    public function path(string $path): string {
-        return $this->path;
     }
 
     public function matches(string $method, string $path): bool
@@ -94,7 +96,7 @@ class Route {
 
         return false;
     }
-    
+
     private function normalisePath(string $path): string
     {
         $path = trim($path, '/');
@@ -104,7 +106,8 @@ class Route {
         return $path;
     }
 
-    public function dispatch() {
+    public function dispatch()
+    {
         return call_user_func($this->handler);
     }
 }

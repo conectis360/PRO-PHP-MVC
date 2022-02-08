@@ -1,9 +1,3 @@
-1. Matching request methods and paths to a specific route;
-2. Handling all the errors we currently do;
-3. Allowing named parameters in routes;
-4. Build URLS from named routes and arguments;
-
-
 # Whoosh website
 
 To run the local development server, try:
