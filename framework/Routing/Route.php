@@ -7,6 +7,15 @@ class Route {
     protected string $path;
     protected $handler;
     protected array $parameters = [];
+    protected ?string $name = null;
+
+    public function name (string $name = null): mixed {
+        if ($name) {
+            $this->name = $name;
+            return $this;
+        }
+        return $this->name;
+    }
 
     public function parameters(): array{
         return $this->parameters;

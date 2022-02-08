@@ -42,6 +42,16 @@ return function(Router $router){
         },
     );
 
+    $router->add(
+        'GET', '/products/{page?}',
+        function () use ($router) {
+            $parameters = $router->current()->parameters();
+            $parameters['page'] ??= 1;
+
+            return "producs for page {$parameters['page']}";
+        },
+    )->name('product-list');
+
     $router->errorHandler(404, fn() => 'whoops!');
 
 };

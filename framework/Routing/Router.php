@@ -85,4 +85,31 @@ class Router {
         }
         return null;
     }
+
+    public function route(
+        string $name,
+        array $parameters = [],
+    ):string {
+        foreach ($this->routes as $route) {
+            if($route->name() === $name) {
+                $finds = [];
+                $replaces = [];
+
+                foreach ($parameters as $key => $value) {
+                    // one set for required parameters
+                    array_push($finds, "{{$key}}");
+                    array_push($replaces, $value);
+
+                    // another for optional parameters
+                    array_push($finds, "{{$key}}");
+                    array_push($replaces, $value);
+                }
+                $path = $route->path();
+                $path = str_replace($finds, $replaces, $path);
+
+                return $path;
+            }
+        }
+        throw new Exception('no route with that name');
+    }
 }
