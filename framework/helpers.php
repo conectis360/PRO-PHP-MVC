@@ -2,15 +2,16 @@
 
 use Framework\View;
 
-if(!function_exists('view')){
-    function view(string $template, array $data = []): string {
-        if($manager){
-            $manager = new View\Manager();
+function view(string $template, array $data = []): string {
+    static $manager;
 
-            $manager->addPath(__DIR__ . '/../resources/views');
-            $manager->addEngine('basic.php', new View\Engine\BasicEngine());
-        }
-        
-        return $manager->render($template, $data);
+    if (!$manager) {
+        $manager = new View\Manager();
+
+        $manager->addPath(__DIR__ . '/../resources/views');
+
+        $manager->addEngine('basic.php', new View\Engine\BasicEngine());
+        $manager->addEngine('php', new View\Engine\Phpengine());
     }
+    return $manager->render($template, $data);
 }

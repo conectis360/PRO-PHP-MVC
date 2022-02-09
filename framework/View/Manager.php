@@ -20,6 +20,16 @@ class Manager {
     }
 
     public function render(string $template, array $data = []): string {
-        //render the template...
+        foreach ($this->engines as $extensions => $engine) {
+            foreach ($this->paths as $path) {
+                $file = "{$path}/{$template}.{$extensions}";
+
+                if (is_file($file)){
+                    return $engine->render($file, $data);
+                }
+            }
+        }
+        throw new Exception("Could not render '{$view}'");
     }
+
 }
