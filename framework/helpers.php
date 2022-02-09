@@ -2,16 +2,23 @@
 
 use Framework\View;
 
-function view(string $template, array $data = []): string {
-    static $manager;
+if (!function_exists('view')) {
+    function view(string $template, array $data = []): View\View
+    {
+        static $manager;
 
-    if (!$manager) {
-        $manager = new View\Manager();
+        if (!$manager) {
+            $manager = new View\Manager();
 
-        $manager->addPath(__DIR__ . '/../resources/views');
+            $manager->addPath(__DIR__ . '/../resources/views');
 
-        $manager->addEngine('basic.php', new View\Engine\BasicEngine());
-        $manager->addEngine('php', new View\Engine\Phpengine());
+            $manager->addEngine('basic.php', new View\Engine\BasicEngine());
+            $manager->addEngine('php', new View\Engine\PhpEngine());
+
+
+            $manager->addMacro('escape', fn($value) => htmlspecialchars($value, ENT_QUOTES));
+        }
+
+        return $manager->resolve($template, $data);
     }
-    return $manager->render($template, $data);
 }

@@ -2,42 +2,48 @@
 
 namespace Framework\View\Engine;
 
+use Framework\View\Engine\HasManager;
+use Framework\View\View;
+use function view;
+
 class Phpengine implements Engine {
 
-    protected string $path;
-    protected ?string $layout;
-    protected string $content;
+    use HasManager;
 
-    protected function extends(string $template): static {
-        $this->layout = $template;
-        return $this;
-    }
+    protected $layouts = [];
 
-    public function render(string $path, array $data = []): string {
-        $this->path = $path;
 
-        extract($data);
+    public function render(View $view): string {
+        extract($view->data);
 
         ob_start();
-        include($this->path);
+        include($view->path);
         $contents = ob_get_contents();
         ob_end_clean();
 
-        if($this->layout) {
-            $__layout = $this->layout;
-            
-            $this->layout = null;
-            $this->contents = $contents;
-            $contentsWIthLayout = view($__layout, $data);
+        if($layout = $this->layouts[$view->path] ?? null) {
+            $contentsWithLayout = view($layout, array_merge(
+                $view->data,
+                ['contents' => $contents],
+            ));
 
-            return $contentsWIthLayout;
+            return $contentsWithLayout;
         }
 
         return $contents;
     }
 
-    protected function escape(string $content): string {
-        return htmlspecialchars($content, ENT_QUOTES);
+    public function __call(string $name, $values) {
+        return $this->manager->useMacro($name, ...$values);
     }
 
+    protected function extends(string $template): static {
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+        $this->layouts[realpath($backtrace[0]['file'])] = $template;
+        return $this;
+    }
+
+    protected function includes(string $template, $data = []):void {
+        print view($template, $data);
+    }
 }
