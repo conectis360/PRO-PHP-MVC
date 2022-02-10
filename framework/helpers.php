@@ -30,3 +30,10 @@ if (!function_exists('view')) {
         return $manager->resolve($template, $data);
     }
 }
+
+if (!function_exists('redirect')){
+    function redirect(string $url) {
+        header("Location: {$url}");
+        exit;
+    }
+}
