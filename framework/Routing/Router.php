@@ -11,7 +11,7 @@ class Router
     protected array $errorHandler = [];
     protected Route $current;
 
-    public function add(string $method, string $path, callable $handler): Route
+    public function add(string $method, string $path, $handler): Route
     {
         $route = $this->routes[] = new Route($method, $path, $handler);
         return $route;
@@ -38,6 +38,13 @@ class Router
                 return $matching->dispatch();
             }
             catch (Throwable $e) {
+                if(isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'dev') {
+                    $whoops = new Run();
+                    $whoops->pushHandler(new PrettyPageHandler());
+                    $whoops->register();
+                    throw $e;
+                }
+
                 return $this->dispatchError();
             }
         }

@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Products\ListProductsController;
+use APP\Http\Controllers\ShowHomeController;
 use Framework\Routing\Router;
 
 return function(Router $router) {
     $router->add(
         'GET', '/',
-        fn() => 'hello world',
+        [ShowHomeController::class, 'handle']
     );
 
     $router->add(
@@ -31,7 +33,11 @@ return function(Router $router) {
         'GET', '/products/view/{product}',
         function () use ($router) {
             $parameters = $router->current()->parameters();
-            return "product is {$parameters['product']}";
+
+            return view('products/view', [
+                'product' => $parameters['product'],
+                'scary' => '<script>alert("hello")</script>',
+            ]);
         },
     );
 
@@ -45,7 +51,10 @@ return function(Router $router) {
                 'product-list', ['page' => $parameters['page'] + 1]
             );
 
-            return "products for page {$parameters['page']}, next page is {$next}";
+            return view('products/list', [
+                'parameters' => $parameters,
+                'next' => $next,
+            ]);
         },
     )->name('product-list');
 
@@ -63,20 +72,8 @@ return function(Router $router) {
     );
 
     $router->add(
-        'GET', '/',
-        fn() => view('home', ['number' => 42]),
-    );
-
-    $router->add(
-        'GET', '/products/view/{product}',
-        function () use ($router){
-            $parameters = $router->current()->parameters();
-
-            return view('products/view', [
-                'product' => $parameters['product'],
-                'scary' => '<script>alert("boo!")</script>',
-            ]);
-        },
-    );
-
+        'GET', '/products/{page?}',
+        [new ListProductsController($router), 'handle'],
+    )->name('list-products');
+    
 };

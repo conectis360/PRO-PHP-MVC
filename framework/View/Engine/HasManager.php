@@ -4,7 +4,8 @@ namespace Framework\View\Engine;
 
 use Framework\View\Manager;
 
-trait HasManager {
+trait HasManager
+{
     protected Manager $manager;
 
     public function setManager(Manager $manager): static
