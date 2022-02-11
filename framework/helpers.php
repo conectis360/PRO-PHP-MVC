@@ -22,8 +22,8 @@ if (!function_exists('view')) {
             $manager->addEngine('php', new View\Engine\PhpEngine());
 
             // how about macros? let's add them here for now
-            $manager->addMacro('escape', fn($value) => htmlspecialchars($value, ENT_QUOTES));
-            $manager->addMacro('includes', fn(...$params) => print view(...$params));
+            $manager->addMacro('escape', fn ($value) => htmlspecialchars($value, ENT_QUOTES));
+            $manager->addMacro('includes', fn (...$params) => print view(...$params));
         }
 
         // return $manager->render($template, $data);
@@ -31,17 +31,19 @@ if (!function_exists('view')) {
     }
 }
 
-if (!function_exists('redirect')){
-    function redirect(string $url) {
+if (!function_exists('redirect')) {
+    function redirect(string $url)
+    {
         header("Location: {$url}");
         exit;
     }
 }
 
-if(!function_exists('validate')){
-    function validate(array $data, array $rules){
+if (!function_exists('validate')) {
+    function validate(array $data, array $rules)
+    {
         static $manager;
-        if(!$manager){
+        if (!$manager) {
             $manager = new Validation\Manager();
 
             $manager->addRule('required', new Validation\Rule\RequiredRule());
@@ -49,5 +51,15 @@ if(!function_exists('validate')){
             $manager->addRule('min', new Validation\Rule\MinRule());
         }
         return $manager->validate($data, $rules);
+    }
+}
+
+if (!function_exists('secure')){
+    function secure() {
+        if(!isset($_POST['csrf']) || 
+        !isset($_SESSION['token']) || 
+        !hash_equals($_SESSION['token'], $_POST['csrf'])) {
+            throw new Exception('CSRF token mismatch');
+        }
     }
 }
