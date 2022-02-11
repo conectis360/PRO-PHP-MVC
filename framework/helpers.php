@@ -37,3 +37,17 @@ if (!function_exists('redirect')){
         exit;
     }
 }
+
+if(!function_exists('validate')){
+    function validate(array $data, array $rules){
+        static $manager;
+        if(!$manager){
+            $manager = new Validation\Manager();
+
+            $manager->addRule('required', new Validation\Rule\RequiredRule());
+            $manager->addRule('email', new Validation\Rule\EmailRule());
+            $manager->addRule('min', new Validation\Rule\MinRule());
+        }
+        return $manager->validate($data, $rules);
+    }
+}
