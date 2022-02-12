@@ -13,9 +13,11 @@ class NameCommand extends Command
     
     protected function configure()
     {
-        $this->setDescription('Prints the name in uppercase')->setHelp('This command takes an optional name and returns it in uppercase. If no name is provided, "stranger" is used.')->addArgument('name', $this->requireName ? InputArgument::REQUIRED : InputArgument::OPTIONAL, 'Optional name');
+        $this->setDescription('Prints the name in uppercase')
+        ->setHelp('This command takes an optional name and returns it in uppercase. If no name is provided, "stranger" is used.')
+        ->addArgument('name', $this->requireName ? InputArgument::REQUIRED : InputArgument::OPTIONAL, 'Optional name');
     }
-    
+
     protected function execute(InputInterface $input, OutputInterface $output) 
     {
         $output->writeln(strtoupper($input->getArgument('name') ?: 'Stranger'));
