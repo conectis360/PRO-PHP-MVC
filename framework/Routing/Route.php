@@ -108,14 +108,16 @@ class Route
 
     public function dispatch()
     {
-        if(is_array($this->handler)) {
+        if (is_array($this->handler)) {
             [$class, $method] = $this->handler;
-            
-            if(is_string($class)) {
+
+            if (is_string($class)) {
                 return (new $class)->{$method}();
             }
+
             return $class->{$method}();
         }
+
         return call_user_func($this->handler);
     }
 }

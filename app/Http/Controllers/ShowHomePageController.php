@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-class ShowHomeController {
-    public function handle() {
+class ShowHomePageController
+{
+    public function handle()
+    {
         return view('home', ['number' => 42]);
     }
 }

@@ -4,15 +4,18 @@ namespace Framework\Validation;
 
 use InvalidArgumentException;
 
-class ValidationException extends InvalidArgumentException {
-    protected array $errors;
+class ValidationException extends InvalidArgumentException
+{
+    protected array $errors = [];
 
-    public function setErrors(array $errors):static {
+    public function setErrors(array $errors): static
+    {
         $this->errors = $errors;
         return $this;
     }
 
-    public function getErrors():array {
+    public function getErrors(): array
+    {
         return $this->errors;
     }
 }

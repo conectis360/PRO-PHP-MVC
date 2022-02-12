@@ -42,5 +42,4 @@ return function(Router $router) {
         'POST', '/register',
         [new RegisterUserController($router), 'handle'],
     )->name('register-user');
-
 };
