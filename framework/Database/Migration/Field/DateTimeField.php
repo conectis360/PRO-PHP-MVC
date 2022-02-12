@@ -2,11 +2,11 @@
 
 namespace Framework\Database\Migration\Field;
 
-class BoolField extends Field
+class DateTimeField extends Field
 {
-    public ?bool $default = null;
+    public ?string $default = null;
 
-    public function default(bool $value): static
+    public function default(string $value): static
     {
         $this->default = $value;
         return $this;

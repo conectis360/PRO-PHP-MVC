@@ -23,9 +23,16 @@ class ShowHomePageController
         $config = require __DIR__ . '/../../../config/database.php';
 
         $connection = $factory->connect($config[$config['default']]);
-
-        $product = $connection->query()->select()->from('products')->first();
         
-        return view('home', ['number' => 42]);
+        $product = $connection
+            ->query()
+            ->select()
+            ->from('products')
+            ->first();
+
+        return view('home', [
+            'number' => 42,
+            'featured' => $product,
+        ]);
     }
 }

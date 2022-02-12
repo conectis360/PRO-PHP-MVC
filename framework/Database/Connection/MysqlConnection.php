@@ -2,13 +2,13 @@
 
 namespace Framework\Database\Connection;
 
-use Framework\Database\Migration\Migration;
 use Framework\Database\Migration\MysqlMigration;
 use Framework\Database\QueryBuilder\MysqlQueryBuilder;
 use InvalidArgumentException;
 use Pdo;
 
-class MysqlConnection extends Connection {
+class MysqlConnection extends Connection
+{
     private Pdo $pdo;
 
     public function __construct(array $config)
@@ -19,26 +19,28 @@ class MysqlConnection extends Connection {
             'database' => $database,
             'username' => $username,
             'password' => $password,
-            ] = $config;
+        ] = $config;
 
-            if (empty($host) || empty($database) || empty($username)) {
-                throw new InvalidArgumentException('Connection incorrectly configured');
-            }
+        if (empty($host) || empty($database) || empty($username)) {
+            throw new InvalidArgumentException('Connection incorrectly configured');
+        }
 
-            $this->pdo = new Pdo("mysql:host={$host};port={$port};dbname={$database}", $username, $password);
+        $this->pdo = new Pdo("mysql:host={$host};port={$port};dbname={$database}", $username, $password);
     }
 
-    public function pdo():pdo {
+    public function pdo(): Pdo
+    {
         return $this->pdo;
     }
-
-    public function query(): MysqlQueryBuilder {
+    
+    public function query(): MysqlQueryBuilder
+    {
         return new MysqlQueryBuilder($this);
     }
 
     public function createTable(string $table): MysqlMigration
     {
-        return New MysqlMigration($this, $table, 'create');
+        return new MysqlMigration($this, $table, 'create');
     }
 
     public function alterTable(string $table): MysqlMigration

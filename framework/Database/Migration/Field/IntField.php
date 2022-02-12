@@ -2,11 +2,11 @@
 
 namespace Framework\Database\Migration\Field;
 
-class BoolField extends Field
+class IntField extends Field
 {
-    public ?bool $default = null;
+    public ?int $default = null;
 
-    public function default(bool $value): static
+    public function default(int $value): static
     {
         $this->default = $value;
         return $this;
