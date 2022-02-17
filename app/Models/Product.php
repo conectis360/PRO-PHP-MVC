@@ -2,7 +2,13 @@
 
 namespace App\Models;
 
+
+use Framework\Database\Model;
 use Exception;
+
+function toInt($value): int{
+    return (int) $value;
+}
 
 class Product extends Model {
     protected string $table;

@@ -22,6 +22,8 @@ abstract class Model {
     public function __get(string $property):mixed {
         $getter = 'get' . ucfirst($property) . 'Attribute';
 
+        $value = null;
+
         if(method_exists($this, $getter)) {
             return $this->$getter($this->attributes[$property] ?? null);
         }
@@ -29,7 +31,12 @@ abstract class Model {
         if(isset($this->attributes[$property])) {
             return $this->attributes[$property];
         }
-        return null;
+
+        if(isset($this->casts[$property]) && is_callable($this->casts[$property])){
+            $value = $this->casts[$property]($value);
+        }
+
+        return $value;
     }
 
     public function __set(string $property, $value) {
@@ -73,6 +80,14 @@ abstract class Model {
         return $this;
     }
     
+    public function delete(): static {
+        if (isset($this->attributes['id'])){
+            static::query()
+                ->where('id', $this->attributes['id'])
+                ->delete();
+        }
+        return $this;
+    }
 
     public function all(): array {
         if (!isset($this->type)) {

@@ -43,11 +43,27 @@ abstract class QueryBuilder
             $query = $this->compileWheres($query);
         }
 
+        if($this->type === 'delete') {
+            $query = $this->compileDelete($query);
+            $query = $this->compileWheres($query);
+        }
+
         if (empty($query)) {
             throw new QueryException('Unrecognised query type');
         }
 
         return $this->connection->pdo()->prepare($query);
+    }
+
+    protected function compileDelete(string $query): string {
+        $query .= " DELETE FROM {$this->table}";
+        return $query;
+    }
+
+    public function delete():int {
+        $this->type = 'delete';
+        $statement = $this->prepare();
+        return $statement->execute($this->getWhereValues());
     }
 
     protected function compileUpdate(string $query): string {
