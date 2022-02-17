@@ -10,13 +10,69 @@ use Framework\Database\Exception\ConnectionException;
 abstract class Model {
     protected Connection $connection;
     protected array $attributes;
-
+    protected array $dirty = [];
+    
     public static function with(array $attributes = []):static {
         $model = new static();
         $model->attributes = $attributes;
 
         return $model;
     }
+
+    public function __get(string $property):mixed {
+        $getter = 'get' . ucfirst($property) . 'Attribute';
+
+        if(method_exists($this, $getter)) {
+            return $this->$getter($this->attributes[$property] ?? null);
+        }
+
+        if(isset($this->attributes[$property])) {
+            return $this->attributes[$property];
+        }
+        return null;
+    }
+
+    public function __set(string $property, $value) {
+        $setter = 'set' . ucfirst($property) . 'Attribute';
+
+        array_push($this->dirty, $property);
+        
+        if(method_exists($this, $setter)) {
+            return $this->$setter($this->attributes[$property] ?? null);
+        }
+
+        $this->attributes[$property] = $value;
+    }
+
+    public function save():static {
+        $values = [];
+
+        foreach ($this->dirty as $dirty) {
+            $values[$dirty] = $this->attributes[$dirty];
+        }
+
+        $data = [array_keys($values), $values];
+
+        $query = static::query();
+
+        if(isset($this->attributes['id'])){
+            $query
+                ->where('id', $this->attributes['id'])
+                ->update(...$data);
+
+                return $this;
+        }
+        $query->insert(...$data);
+
+        $this->attributes['id'] = $query->getLastInsertId();
+        $this->dirty = [];
+
+        $query->insert(...$data);
+        $this->attributes['id'] = $query->getLastInsertId();
+        
+        return $this;
+    }
+    
 
     public function all(): array {
         if (!isset($this->type)) {

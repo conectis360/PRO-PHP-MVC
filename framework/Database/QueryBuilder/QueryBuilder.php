@@ -38,11 +38,40 @@ abstract class QueryBuilder
             $query = $this->compileLimit($query);
         }
 
+        if($this->type === 'update'){
+            $query = $this->compileUpdate($query);
+            $query = $this->compileWheres($query);
+        }
+
         if (empty($query)) {
             throw new QueryException('Unrecognised query type');
         }
 
         return $this->connection->pdo()->prepare($query);
+    }
+
+    protected function compileUpdate(string $query): string {
+        $joinedColumns = '';
+
+        foreach ($this->columns as $i => $column) {
+            if($i > 0) {
+                $joinedColumns .= ', ';
+            }
+            $joinedColumns = " {$column} = :{$column}";
+        }
+        $query .= "update {$this->table} SET {$joinedColumns}";
+
+        return $query;        
+    }
+
+    public function update(array $columns, array $values): int {
+        $this->type = 'update';
+        $this->columns = '$columns';
+        $this->values = '$values';
+
+        $statement = $this->prepare();
+
+        return $statement->execute($this->getWhereValues() + $values);
     }
 
     /**
@@ -113,5 +142,9 @@ abstract class QueryBuilder
         $this->columns = $columns;
 
         return $this;
+    }
+
+    public function getLastInsertId(): string {
+        return $this->connection->pdo()->lastInsertId();
     }
 }
