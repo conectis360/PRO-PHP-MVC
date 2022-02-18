@@ -29,7 +29,10 @@ abstract class Model {
         }
 
         if(isset($this->attributes[$property])) {
-            return $this->attributes[$property];
+            $relationship = $this->$property();
+            $method = $relationship->method;
+
+            $value = $relationship->$method();
         }
 
         if(isset($this->casts[$property]) && is_callable($this->casts[$property])){
@@ -41,7 +44,24 @@ abstract class Model {
 
     public function hasOne(string $class, string $foreignKey, string $primaryKey = 'id'): mixed {
         $model = new $class;
-        $query = $class::query()->from($model)
+        $query = $class::query()->from($model->getTable())->where($foreignKey, $this->attributes['id']);
+
+        return new Relationship($query, 'first');
+    }
+
+    public function hasMany(string $class, string $foreignKey, string $primaryKey = 'id'): mixed {
+        $model = new $class;
+        $query = $class::query()->from($model->getTable())->where($foreignKey,
+        $this->attributes['id']);
+
+        return new Relationship($query, 'all');
+    }
+
+    public function belongsTo(string $class, string $foreignKey, string $primaryKey = 'id'):mixed {
+        $model = new $class;
+        $query = $class::query()->from($model->getTable())->where($primaryKey, $this->attributes[$foreignKey]);
+
+        return new Relationship($query, 'first');
     }
 
     public function __set(string $property, $value) {

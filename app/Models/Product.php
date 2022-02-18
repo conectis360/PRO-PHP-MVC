@@ -11,7 +11,7 @@ function toInt($value): int{
 }
 
 class Product extends Model {
-    protected string $table;
+    protected string $table = 'profiles';
     protected array $casts = [
         'id' => 'App\Models\toInt',
     ];
@@ -19,6 +19,10 @@ class Product extends Model {
     public function setTable(string $table):static{
         $this->table = $table;
         return $this;
+    }
+
+    public function user():mixed {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getTable():string {
