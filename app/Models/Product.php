@@ -12,6 +12,9 @@ function toInt($value): int{
 
 class Product extends Model {
     protected string $table;
+    protected array $casts = [
+        'id' => 'App\Models\toInt',
+    ];
 
     public function setTable(string $table):static{
         $this->table = $table;

@@ -39,6 +39,11 @@ abstract class Model {
         return $value;
     }
 
+    public function hasOne(string $class, string $foreignKey, string $primaryKey = 'id'): mixed {
+        $model = new $class;
+        $query = $class::query()->from($model)
+    }
+
     public function __set(string $property, $value) {
         $setter = 'set' . ucfirst($property) . 'Attribute';
 
