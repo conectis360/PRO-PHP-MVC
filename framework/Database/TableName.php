@@ -2,8 +2,9 @@
 
 namespace Framework\Database;
 
-#[Attribute] 
-class TableName {
+#[Attribute]
+class TableName
+{
     public string $name;
 
     public function __construct(string $name)

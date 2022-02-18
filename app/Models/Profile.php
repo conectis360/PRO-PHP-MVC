@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Framework\Database\Model;
 
-class Order extends Model
+class Profile extends Model
 {
-    protected string $table = 'orders';
+    protected string $table = 'profiles';
 
     public function user(): mixed
     {
