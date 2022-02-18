@@ -161,4 +161,17 @@ abstract class Model {
         }
         return $this->connection;
     }
+
+    public function getTable(): string {
+        if(!isset($this->table)){
+            $reflector = new ReflectionClass(static::class);
+
+            foreach ($reflector->getAttributes() as $attribute) {
+                return $attribute->getArguments()[0];
+            }
+
+            throw new Exception('$table is not set and getTable is not defined');
+        }
+        return $this->table;
+    }
 }
