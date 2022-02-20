@@ -4,6 +4,7 @@ namespace Framework;
 
 use Dotenv\Dotenv;
 use Framework\Routing\Router;
+use ReflectionFunction;
 
 class App extends Container
 {
@@ -15,6 +16,23 @@ class App extends Container
             static::$instance = new static();
         }
         return static::$instance;
+    }
+
+    public function call (array|callable $callable, array $parameters = []):mixed {
+        $reflector = $this->getReflector($callable);
+        $dependencies = [];
+        foreach($reflector->gerParameters() as $parameter){
+            $name = $parameter->getName();
+            $type = $parameter->getType();
+        }
+    }
+
+    private function getReflector(array|callable $callable): ReflectionMethod|ReflectionFunction {
+        if(is_array($callable)) {
+            return new ReflectionMethod($callable[0], $callable[1]);
+        }
+
+        return new ReflectionFunction($callable);
     }
 
     private function __construct()

@@ -5,22 +5,6 @@ use Framework\App;
 use Framework\View;
 
 if (!function_exists('view')) {
-    app()->bind('view', function ($app) {
-        $manager = new View\Manager();
-        $manager->addPath(__DIR__ . '/../resources/views');
-        $manager->addPath(__DIR__ . '/../resources/images');
-        $manager->addEngine('basic.php', new View\Engine\BasicEngine());
-        $manager->addEngine('advanced.php', new View\Engine\AdvancedEngine());
-        $manager->addEngine('php', new View\Engine\PhpEngine());
-        $manager->addEngine('svg', new View\Engine\LiteralEngine());
-        $manager->addMacro('escape', fn ($value) => htmlspecialchars(
-            $value,
-            ENT_QUOTES
-        ));
-        $manager->addMacro('includes', fn (...$params) => print
-            view(...$params));
-        return $manager;
-    });
     function view(string $template, array $data = []): View\View
     {
         return app()->resolve('view')->resolve($template, $data);
