@@ -28,14 +28,8 @@ class ValidationTest {
     }
 
     public function testValidEmailValuesPass() {
-        $this->setUp();
-        try {
-            $this->manager->validate(['email' => 'foo@bar.com'], ['email' => ['email']]);
-        }
-        catch(Throwable $e) {
-            throw new Exception('validation did failed');
-            return;
-        }
+        $data = $this->manager->validate(['email' => 'foo@bar.com'], ['email' => 'email']);
+        $this->assertEquals($data['email'], 'foo@bar.com');
     }
 }
 
