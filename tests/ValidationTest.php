@@ -21,14 +21,10 @@ class ValidationTest {
 
         $expected = ['email' => ['email should be an email']];
 
-        try {
-            $this->manager->validate(['email' => 'foo'], ['email' => ['email']]);
-        }catch (Throwable $e) {
-            assert($e instanceof ValidationException, 'error should be thrown');
-            assert($e->getErrors()['email'] === $expected['email'], 'messages should match');
-            return;
-        }
-        throw new Exception('validation did not fail');
+        [$exception] = $this->assertExceptionThrown(fn() => $this->manager->validate(['email' => 'foo'], 
+        ['email' => ['email']]), ValidationException::class,);
+
+        $this->assertEquals($expected, $exception->getErrors());
     }
 
     public function testValidEmailValuesPass() {
