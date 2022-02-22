@@ -27,15 +27,41 @@ class Router
 
     public function dispatch()
     {
-        if(is_array($this->handler)){
-            [$class, $method] = $this->handler;
+        $paths = $this->paths();
 
-            if(is_string($class){
-                return app()->call([new $class, $method]);
+        $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $requestPath = $_SERVER['REQUEST_URI'] ?? '/';
+
+        $matching = $this->match($requestMethod, $requestPath);
+
+        if ($matching) {
+            $this->current = $matching;
+
+            try {
+                return $matching->dispatch();
             }
-            return app()->call([$class, $method]);
+            catch (Throwable $e) {
+                if ($e instanceof ValidationException) {
+                    $_SESSION[$e->getSessionName()] = $e->getErrors();
+                    return redirect($_SERVER['HTTP_REFERER']);
+                }
+
+                if (isset($_ENV['APP_ENV']) && $_ENV['APP_ENV'] === 'dev') {
+                    $whoops = new Run();
+                    $whoops->pushHandler(new PrettyPageHandler);
+                    $whoops->register();
+                    throw $e;
+                }
+
+                return $this->dispatchError();
+            }
         }
-        return app()->call($this->handler);
+        
+        if (in_array($requestPath, $paths)) {
+            return $this->dispatchNotAllowed();
+        }
+        
+        return $this->dispatchNotFound();
     }
 
     private function paths(): array
