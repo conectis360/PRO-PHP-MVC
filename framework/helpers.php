@@ -68,3 +68,15 @@ if (!function_exists('basePath')) {
         return app('paths.base');
     }
 }
+
+if(!function_exists('response')){
+    function response() {
+        return app('response');
+    }
+}
+
+if(!function_exists('redirect')){
+    function redirect(string $url){
+        return response()->redirect($url);
+    }
+}
