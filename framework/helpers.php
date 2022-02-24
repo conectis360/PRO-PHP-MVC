@@ -29,11 +29,17 @@ if (!function_exists('validate')) {
     }
 }
 
+if (!function_exists('response')) {
+    function response()
+    {
+        return app('response');
+    }
+}
+
 if (!function_exists('redirect')) {
     function redirect(string $url)
     {
-        header("Location: {$url}");
-        exit;
+        return response()->redirect($url);
     }
 }
 
@@ -69,14 +75,19 @@ if (!function_exists('basePath')) {
     }
 }
 
-if(!function_exists('response')){
-    function response() {
-        return app('response');
+if (!function_exists('env')) {
+    function env(string $key, mixed $default = null): mixed
+    {
+        if (isset($_SERVER[$key])) {
+            return $_SERVER[$key];
+        }
+
+        return $default;
     }
 }
 
-if(!function_exists('redirect')){
-    function redirect(string $url){
-        return response()->redirect($url);
+if(!function_exists('config')){
+    function config(string $key, mixed $default = null):mixed {
+        return app('config')->get($key, $default);
     }
 }

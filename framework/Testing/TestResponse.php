@@ -13,14 +13,17 @@ class TestResponse
     {
         $this->response = $response;
     }
+
     public function isRedirecting(): bool
     {
         return $this->response->type() === Response::REDIRECT;
     }
+
     public function redirectingTo(): ?string
     {
         return $this->response->redirect();
     }
+
     public function follow(): static
     {
         while ($this->isRedirecting()) {
@@ -28,8 +31,10 @@ class TestResponse
             $_SERVER['REQUEST_URI'] = $this->redirectingTo();
             $this->response = App::getInstance()->run();
         }
+
         return $this;
     }
+
     public function __call(string $method, array $parameters = []): mixed
     {
         return $this->response->$method(...$parameters);
